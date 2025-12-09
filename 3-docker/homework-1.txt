@@ -1,0 +1,51 @@
+Задача 1
+
+    - Установите docker и docker compose plugin на свою linux рабочую станцию или ВМ.
+    - Если dockerhub недоступен создайте файл /etc/docker/daemon.json с содержимым: {"registry-mirrors": ["https://mirror.gcr.io", "https://daocloud.io", "https://c.163.com/", "https://registry.docker-cn.com"]}
+    - Зарегистрируйтесь и создайте публичный репозиторий с именем "custom-nginx" на https://hub.docker.com (ТОЛЬКО ЕСЛИ У ВАС ЕСТЬ ДОСТУП);
+    - скачайте образ nginx:1.29.0;
+    - Создайте Dockerfile и реализуйте в нем замену дефолтной индекс-страницы(/usr/share/nginx/html/index.html), на файл index.html с содержимым:
+
+
+    Соберите и отправьте созданный образ в свой dockerhub-репозитории c tag 1.0.0 (ТОЛЬКО ЕСЛИ ЕСТЬ ДОСТУП).
+    Предоставьте ответ в виде ссылки на https://hub.docker.com/<username_repo>/custom-nginx/general .
+
+Выполнение:
+- sudo curl -L https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m) -o /usr/bin/docker-compose - установка docker-compose
+- sudo chmod +x /usr/bin/docker-compose - выдача прав на файл
+
+- Создание Dockerfile
+    FROM nginx:1.29.0
+
+    COPY index.html /usr/share/nginx/html/
+
+    EXPOSE 80
+
+    CMD ["nginx", "-g", "daemon off;"]
+
+- Сбор кастомного образа Nginx, в который копируем свой index.html
+    docker build -t custom-nginx:1.0.0 . 
+- Проверяем docker images
+    docker images
+- Запуск контейнера (Важно: имя контейнера должно быть перед образом)
+    docker run -p 8080:80 -d --name custom-nginx custom-nginx:1.0.0
+- Проверка работоспособности Nginx  через curl localhost:8080
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Hey, Netology</title>
+    </head>
+    <body>
+        <h1>I will be DevOps Engineer!</h1>
+    </body>
+ 
+ - Регистрация на hub.docker.com -> создание репозитори -> создание access token для загрузки образов
+ - docker login  и прокидываем токен из settings в веб морде 
+ - Пуш docker image (ВАЖНО: Например, если ваше имя пользователя на Docker Hub — my_user, тогда образ должен называться так: my_user/custom-nginx:1.0.0)
+     - docker tag custom-nginx:1.0.0 olegmanzhay/custom-nginx:1.0.0 - меняем название образа, чтобы смоги запушить в свою репу
+     - docker push olegmanzhay/custom-nginx:1.0.0
+
+Результат:    
+https://hub.docker.com/repository/docker/olegmanzhay/custom-nginx/general

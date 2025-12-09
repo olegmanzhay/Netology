@@ -1,0 +1,33 @@
+Задача 2
+
+    Запустите ваш образ custom-nginx:1.0.0 командой docker run в соответвии с требованиями:
+
+    имя контейнера "ФИО-custom-nginx-t2"
+    контейнер работает в фоне
+    контейнер опубликован на порту хост системы 127.0.0.1:8080
+
+    Не удаляя, переименуйте контейнер в "custom-nginx-t2"
+    Выполните команду date +"%d-%m-%Y %T.%N %Z" ; sleep 0.150 ; docker ps ; ss -tlpn | grep 127.0.0.1:8080  ; docker logs custom-nginx-t2 -n1 ; docker exec -it custom-nginx-t2 base64 /usr/share/nginx/html/index.html
+    Убедитесь с помощью curl или веб браузера, что индекс-страница доступна.
+
+В качестве ответа приложите скриншоты консоли, где видно все введенные команды и их вывод.
+
+date +"%d-%m-%Y %T.%N %Z" ; sleep 0.150 ; docker ps ; ss -tlpn | grep 127.0.0.1:8080  ; docker logs custom-nginx-t2 -n1 ; docker exec -it custom-nginx-t2 base64 /usr/share/nginx/html/index.html
+08-12-2025 15:47:04.112849844 +05
+CONTAINER ID   IMAGE                            COMMAND                  CREATED         STATUS         PORTS                                     NAMES
+97fd7015adac   olegmanzhay/custom-nginx:1.0.0   "/docker-entrypoint.…"   2 minutes ago   Up 2 minutes   0.0.0.0:8080->80/tcp, [::]:8080->80/tcp   custom-nginx-t2
+172.17.0.1 - - [08/Dec/2025:10:45:01 +0000] "GET / HTTP/1.1" 200 170 "-" "curl/8.5.0" "-"
+PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0
+PSJVVEYtOCI+CiAgICA8dGl0bGU+SGV5LCBOZXRvbG9neTwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+
+CiAgICA8aDE+SSB3aWxsIGJlIERldk9wcyBFbmdpbmVlciE8L2gxPgo8L2JvZHk+CjwvaHRtbD4=
+admin-oleg@admin-oleg-VMware-Virtual-Platform:/etc/docker$ curl localhost:8080
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hey, Netology</title>
+</head>
+<body>
+    <h1>I will be DevOps Engineer!</h1>
+</body>
+</html>a
