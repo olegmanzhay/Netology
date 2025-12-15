@@ -1,0 +1,64 @@
+Инструкция по загрузки Docker registry Яндекс облака
+- Установки CLI: curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash (https://yandex.cloud/ru/docs/cli/operations/install-cli)
+
+- Создание профиля: (https://yandex.cloud/ru/docs/cli/operations/profile/profile-create#yandex-account_1)
+    - yc config profile create test
+    - yc config set folder-id b1g21id6bcefmvt4ktbc (b1g21id6bcefmvt4ktbc - id каталога) https://console.yandex.cloud/folders/b1g21id6bcefmvt4ktbc
+    - yc init - настройку профиля CLI
+        Welcome! This command will take you through the configuration process.
+        Pick desired action:
+        [1] Re-initialize this profile 'test' with new settings 
+        [2] Create a new profile
+        Please enter your numeric choice: 1
+        Please go to https://oauth.yandex.ru/authorize?response_type=token&client_id=1a6990aa636648e9b2ef855fa7bec2fb in order to obtain OAuth token.
+        Please enter OAuth token: y0__xDM17uLARjB3RMg7Oeh1hXG2AN-pr6YhkkhndcS_vNr57insQ
+        You have one cloud available: 'cloud-oleg-manzhay' (id = b1g3a3i0fgpc8rekglrh). It is going to be used by default.
+        Please choose folder to use:
+        [1] default (id = b1gvkhufmti0jdoakccc)
+        [2] dockerregistry (id = b1g21id6bcefmvt4ktbc)
+        [3] registry (id = b1gmkg7r8tp34lc7rbhq)
+        [4] Create a new folder
+        Please enter your numeric choice: 2
+        Your current folder has been set to 'dockerregistry' (id = b1g21id6bcefmvt4ktbc).
+        Do you want to configure a default Compute zone? [Y/n] y
+        Which zone do you want to use as a profile default?
+        [1] ru-central1-a
+        [2] ru-central1-b
+        [3] ru-central1-d
+        [4] Don't set default zone
+        Please enter your numeric choice: 1
+        Your profile default Compute zone has been set to 'ru-central1-a'.
+
+        - Получили токен: https://oauth.yandex.ru/verification_code y0__xDM17uLARjB3RMg7Oeh1hXG2AN-pr6YhkkhndcS_vNr57insQ
+        - echo y0__xDM17uLARjB3RMg7Oeh1hXG2AN-pr6YhkkhndcS_vNr57insQ|docker login   --username oauth   --password-stdin  cr.yandex
+
+    - yc config list - проверка конфигии
+        token: y0__xDM17uLARjB3RMg7Oeh1hXG2AN-pr6YhkkhndcS_vNr57insQ
+        cloud-id: b1g3a3i0fgpc8rekglrh
+        folder-id: b1g21id6bcefmvt4ktbc
+        compute-default-zone: ru-central1-a
+
+- Создание реестра (https://yandex.cloud/ru/docs/container-registry/quickstart/?from=int-console-help&utm_referrer=https%3A%2F%2Fgithub.com%2Fnetology-code%2Fvirtd-homeworks%2Fblob%2Fshvirtd-1%2F05-virt-04-docker-in-practice%2FREADME.md)
+    - yc container registry create --name my-first-registry
+        done (1s)
+        id: crpvstcq03e9l7aj0lfe
+        folder_id: b1g21id6bcefmvt4ktbc
+        name: my-first-registry
+        status: ACTIVE
+        created_at: "2025-12-15T08:38:21.534Z"
+    
+- Конфигурация Docker для работы с yandex registry
+   - yc container registry configure-docker
+
+- Работа с образами
+    - Скачайте Docker-образ из репозитория Docker Hub:
+        docker pull ubuntu
+    - Присвойте скачанному Docker-образу тег вида cr.yandex/<идентификатор_реестра>/<имя_Docker-образа>:<тег>: (id реестра: crpvstcq03e9l7aj0lfe)
+        docker tag ubuntu cr.yandex/<идентификатор_реестра>/ubuntu:hello
+
+    - Загрузите Docker-образ в репозиторий Container Registry:
+        docker push cr.yandex/<идентификатор_реестра>/ubuntu:hello (id реестра: crpvstcq03e9l7aj0lfe)
+
+    - Запустите Docker-образ
+        docker run cr.yandex/<идентификатор_реестра>/ubuntu:hello (id реестра: crpvstcq03e9l7aj0lfe)
+
