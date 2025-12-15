@@ -1,0 +1,4 @@
+DB_HOST="db" 
+DB_USER="app" 
+DB_PASSWORD="very_strong" 
+DB_NAME="example" 

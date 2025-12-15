@@ -1,0 +1,36 @@
+# Включаем внешний файл
+include:
+  - proxy.yaml
+
+services:
+  # Сервис веб-приложения
+  web:
+    image: web:latest
+    networks:
+        backend:
+          ipv4_address: 172.20.0.5
+    env_file:
+      - ./env_db_mysql
+    depends_on:
+      - db
+    restart: always
+
+  # Сервис MySQL
+  db:
+    image: mysql:8
+    networks:
+        backend:
+          ipv4_address: 172.20.0.10
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: "%"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: on-failure
+
+volumes:
+  mysql-data: {}
+
