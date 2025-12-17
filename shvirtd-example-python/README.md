@@ -59,8 +59,8 @@ uvicorn main:app --host 0.0.0.0 --port 5000 --reload
 
 ```sql
 CREATE DATABASE example;
-CREATE USER 'app'@'localhost' IDENTIFIED BY 'very_strong';
-GRANT ALL PRIVILEGES ON example.* TO 'app'@'localhost';
+CREATE USER 'app'@'%' IDENTIFIED BY 'very_strong';
+GRANT ALL PRIVILEGES ON example.* TO 'app'@'%';
 FLUSH PRIVILEGES;
 ```
 
@@ -94,3 +94,14 @@ curl http://localhost:5000
 ## Лицензия
 
 Этот проект распространяется под лицензией MIT (подробности в файле `LICENSE`).
+
+
+
+
+sha256:7e2a9243ac37762b061fe61d62ebfc3d8905f41c158cc183fd9863645fb45824 
+
+docker save hashicorp/terraform  -o image.tar
+tar -xf image.tar
+cd 7e2a9243ac37762b061fe61d62ebfc3d8905f41c158cc183fd9863645fb45824 
+tar -xf layer.tar
+cat ./app/requirements.txt
