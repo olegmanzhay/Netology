@@ -1,0 +1,2 @@
+docker swarm init - стал лидером (manager)
+docker swarm join --token SWMTKN-1-2iosvgnodzn0smb2r3kh17ubxca7li2ndch1zno3opce3zogdh-7cnxo1zklur3gekb38detpp82 10.130.0.14:2377 (для workers)

@@ -1,5 +1,53 @@
 Docker
 ------------------------------------------------------------------------------------------------------------------------------------------------
+Инструкция по установке Docker:
+Обновление пакетов:
+Сначала обновите систему пакетами и репозиториями:
+bash
+Копировать
+sudo apt-get update && sudo apt-get upgrade -y
+Установите предварительные пакеты:
+Прежде чем устанавливать Docker, рекомендуется установить несколько вспомогательных пакетов:
+bash
+Копировать
+sudo apt-get install \
+   ca-certificates \
+   curl \
+   gnupg \
+   lsb-release
+Добавьте репозиторий Docker:
+Скачайте и импортируйте GPG-ключ официального репозитория Docker:
+bash
+Копировать
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+Добавьте репозиторий Docker в sources.list:
+Настроим APT для использования HTTPS при обращении к репозиторию Docker:
+bash
+Копировать
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+Обновите индекс пакетов:
+Обновите кэш пакета APT, чтобы включить новый репозиторий Docker:
+bash
+Копировать
+sudo apt-get update
+Установите Docker Engine:
+Наконец, устанавливаем Docker:
+bash
+Копировать
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+Запуск и проверка Docker:
+После установки Docker запустите службу и активируйте автозапуск:
+bash
+Копировать
+sudo systemctl enable docker.service
+sudo systemctl start docker.service
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
 
 Состав Docker
 - Docker daemon - сервенрная часть докера , которая управляет сущностями в Docker - я бы сказал движок,
@@ -61,24 +109,20 @@ cgroups
 Advanced dockerfile build and security
 
 Dockerfile (-y ключ выполнить интерактивно )
-FROM
-WORKDIR
-COPY
-RUN
-
-ENTRYPOINT - что запускаем
-нельзя в конце команды docker run image ... тут идут команды cmd
-CMD - с какими параметрами, если нет entrypoint - то CMD может выполнить роль ENTRYPOINT
-лучше использовать его чем entrypoint, по факту одно и тоже
-Форматы:
-    - exec (а тут инициализируешим процессом будет приложение, например python app.py) + (не умеет работать с переменными, а shell умеет)
-    - shell - НЕИСПОЛЬЗОВАТЬ ДЛЯ БИЗНЕС ПРИЛОЖЕНИЙ (OS signal - будет инициализирующим процессом, то есть главным)
-
-
-ENV - доступные
-ARG - почти равно ENV, но аргумент сборки, работает на этапе dockerfile -> docker build
-
-USER
+    FROM
+    WORKDIR
+    COPY
+    RUN
+    ENTRYPOINT - что запускаем
+    нельзя в конце команды docker run image ... тут идут команды cmd
+    CMD - с какими параметрами, если нет entrypoint - то CMD может выполнить роль ENTRYPOINT
+    лучше использовать его чем entrypoint, по факту одно и тоже
+    Форматы:
+        - exec (а тут инициализируешим процессом будет приложение, например python app.py) + (не умеет работать с переменными, а shell умеет)
+        - shell - НЕИСПОЛЬЗОВАТЬ ДЛЯ БИЗНЕС ПРИЛОЖЕНИЙ (OS signal - будет инициализирующим процессом, то есть главным)
+    ENV - доступные
+    ARG - почти равно ENV, но аргумент сборки, работает на этапе dockerfile -> docker build
+    USER
 
 Секреты не передаем в аргументы и переменные
     - Решение

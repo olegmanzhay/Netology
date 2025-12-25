@@ -1,0 +1,139 @@
+Docker
+------------------------------------------------------------------------------------------------------------------------------------------------
+    Состав Docker
+    - Docker daemon - сервенрная часть докера , которая управляет сущностями в Docker - я бы сказал движок,
+      который выполняет команды от клиенсткой части
+    - Docker Cli - клиенсткая часть для работы с Docker daemon (отправляет команды, которые выполняет Docker Daemon) - например собрать image
+    - Dockerfile - инструкция по которому будет собран image
+    - Image - образ приложения
+    - Container - контейнер в котором развернут образ, best practice 1 container = 1 image
+    - Docker registry - хранилище образов
+
+    Основные команды (детальнее и теги смотреть в официальной документации):
+    doсker search <название образа> - поиск образов в репозитории (docker registry)
+    docker build -t <название образа> - сбор образа (запускать в папке или указывать путь до Dockerfile)
+    docker pull <название образа> - скачивание образа из docker registry
+    docker push <название образа> - загрузка образа в docker registry
+    docker run <название образа> - старт контейнера
+    docker ps - проверка запущенных контейнеров
+    docker ps -a - проверка запущенных/завершенных контейнеров
+    docker rmi <название образа> - удаление образа
+    docker rm <название конетйнера> - удаление конетйнера
+------------------------------------------------------------------------------------------------------------------------------------------------
+    Dockerfile (-y ключ выполнить интерактивно )
+        FROM
+        WORKDIR
+        COPY
+        RUN
+        ENTRYPOINT - что запускаем
+        нельзя в конце команды docker run image ... тут идут команды cmd
+        CMD - с какими параметрами, если нет entrypoint - то CMD может выполнить роль ENTRYPOINT
+        лучше использовать его чем entrypoint, по факту одно и тоже
+            Форматы:
+                - exec (а тут инициализируешим процессом будет приложение, например python app.py) + (не умеет работать с переменными, а shell умеет)
+                - shell - НЕИСПОЛЬЗОВАТЬ ДЛЯ БИЗНЕС ПРИЛОЖЕНИЙ (OS signal - будет инициализирующим процессом, то есть главным)
+        ENV - доступные
+        ARG - почти равно ENV, но аргумент сборки, работает на этапе dockerfile -> docker build
+        USER
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+    Best practice
+    - При сборке image удалять кеш на слое (пример rm-rf /var/lib/apt/lists/*)
+    - dockerignore - файл, в котором находятся исключения, которые не нужны в контейнере (обычно кладут в папку с Dockerfile и приложением)
+    - для увеличения скорости сборки и уменьшения размера image, рекомундуется использовать облегченные базовые образы (FROM в Dockerfile)
+    - Часто-изменяемые слои ставить в конец команд Dockerfile!!!!!!!, так как если в начале слой изменяется, то последующие слои тоже пересобираются
+      в слоях до изменения используется кеш
+    - Явное использование тегов в Dockerfile/командах для избегания разъезжания версий (например базовый образ поменялся latest,
+      а докер собрал новый образ с неподдерживаем для вашего приложения базовый образ)
+    - Параметризация в Dockerfile через ENV параметры (например ENV NGINX_VERSION 1.16.1-r6),  а потом подставить их в другом месте в Dockerfile
+    - Multi-stage сборка - можно создать бинарь, а потом бинарник копируем в чистый образ (scratch) => не будет много слоев
+    - Не запускать свои контейнеры под root, надо в Dockerfile указать USER user1, под ним будет запускаться контейнер
+    - Twelve factor app
+
+ ------------------------------------------------------------------------------------------------------------------------------------------------
+    Docker-compose
+
+    docker-compose build — Cборка образа. Собранные образы помечаются, как projectservice.
+    docker-compose pull — Скачивает образы из удалённого реестра в локальный Docker Registry.
+    docker-compose push — Загружает образ из локально реестра в удаленный реестр (Docker Registry).
+    docker-compose up (-d) — Извлекает/Собирает/Запускает контейнеры на основе указанных в stanza service: образов.
+    docker-compose logs (-f) — Выводит в STDOUT логи контейнеров на основе указанных в stanza service: запущенных контейнеров.
+    docker-compose ps (-a) — Выводит список запущенных контейнеров на основе указанных в stanza service: в docker-compose файле.
+    docker-compose top — Выводит список запущенных процессов внутри контейнеров на основе указанных в stanza service: в docker-compose файле.
+    docker-compose down -v — Останавливает все запущенные контейнеры на основе указанных в stanza service: в docker-compose файле., ключик -v удаляет еще кеширующие данные
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+Kubernetes
+    - RBAC
+    - MTLS
+    - Voluems/PVC/Storage classes
+    - Configmap
+    - Secrets
+    - HPA
+    - StatefullSet
+    - DaemonSet
+
+    - helm
+        ---------------------------------------------------------------------------------------------
+        Установка (https://helm.sh/docs/intro/install/)
+            sudo apt-get install curl gpg apt-transport-https --yes
+            curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+            echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+            sudo apt-get update
+            sudo apt-get install helm
+        ---------------------------------------------------------------------------------------------
+        Команды:
+            - helm search hub/repo
+                hub - поиск чарта в репозитории локально
+                repo - репозитория с чартами
+            - helm repo add bitnami https://charts.bitnami.com/bitnami  - добавить репозиторий с чартами локально на машину
+            - helm repo update - обновить все репозитории локально на машине
+            - helm repo remove <название репозитория>  - удаление репозитория
+
+            - helm install <название чарта>  - установка чарта
+                helm install my-release oci://registry-1.docker.io/bitnamicharts/nginx
+                или
+                helm install wordpress  oci://registry-1.docker.io/bitnamicharts/wordpress
+            - helm upgrade <название чарта>   - обновить чарт
+            - helm pull <название чарта>  - скачать чарт
+                helm pull oci://registry-1.docker.io/bitnamicharts/nginx
+                Далее можно распокавать архив tgz
+                    - tar xvf nginx-22.3.9.tgz
+            -
+             helm show <название чарта> - информация о чарте
+            - helm list - список установленных чартов в k8s
+            - helm uninstall/delete <название релиза> - удаление чарта
+            - helm create <название чарта> - создает стартер (базовый набор шаблонов)
+        ---------------------------------------------------------------------------------------------
+
+        Хуки (нужны для тестов, они не являются частью релиза и их нужно удалять с помоьщью аннотации helm.sh/hook-delete-policy: hook-succeeded)
+        пример
+            helm.sh/hook: pre-install
+            helm.sh/hook-weight: "-5"
+            helm.sh/hook-delete-policy: hook-succeeded
+        ---------------------------------------------------------------------------------------------
+
+        P.S
+        admin-oleg@admin-oleg-VMware-Virtual-Platform:~/Desktop/slurm-school-dev/school-dev-k8s/practice/18.templating$ kubectl get svc
+        NAME                         TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+        kubernetes                   ClusterIP      10.96.0.1        <none>        443/TCP                      24h
+        wordpress                    LoadBalancer   10.101.232.247   <pending>     80:31794/TCP,443:32703/TCP   15m
+        wordpress-mariadb            ClusterIP      10.102.174.239   <none>        3306/TCP                     15m
+        wordpress-mariadb-headless   ClusterIP      None             <none>        3306/TCP                     15m
+        kubectl port-forward svc/wordpress 8080:80 - без TLS
+        kubectl port-forward svc/wordpress 8443:443 - c TLS
+istio
+    - Destination Rule
+    - Virtual Service
+    - Service Entry
+    - Envoy Filter
+    - Service
+    - Ingress/Egress Gateway
+    - Peer Auntification
+
+Postgres
+Redis
+Kafka
+Ansible
+Terraform
