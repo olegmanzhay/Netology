@@ -123,7 +123,7 @@ Service
             - ExternalName
             - Headless Service
 
-        **!!!ВАЖНО!!! - взаимодействие service и pod завязано на selector (selector service -> label pod (только тогда service увидит под))**
+        _!!!ВАЖНО!!! - взаимодействие service и pod завязано на selector (selector service -> label pod (только тогда service увидит под))_
 ------------------------------------------------------------------------------------------------------------------------------------------------
 RBAC
 
