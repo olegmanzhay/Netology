@@ -125,13 +125,15 @@ Kubernetes
     - Volume/Persistent Volume/PVC/Storage classes
         - Volume 
             - хранилище внутри пода, если под рестартует, хранилище будем пустым
-        ![volume.png](volume.png)
+![volume.png](volume.png)
+------------------------------------------------------------------------------------------------------------------------------------------------
         - Persistent volume
             - хранилище вне пода, если под рестартует, хранилище будем оставаться с данными
-        ![persistent_volume.png](persistent_volume.png)
+![persistent_volume.png](persistent_volume.png)
+------------------------------------------------------------------------------------------------------------------------------------------------
         - Persistent volume claim
             - требование пода взаимодействовать с Persistent volume, k8s выделаяет Persistent volume (PV)
-        ![Persistent_volume_claim.png](Persistent_volume_claim.png)
+![Persistent_volume_claim.png](Persistent_volume_claim.png)
 ------------------------------------------------------------------------------------------------------------------------------------------------    
     - Configmap
     - Secrets
