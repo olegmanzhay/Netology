@@ -14,7 +14,7 @@
         Please enter OAuth token: y0__xDM17uLARjB3RMg7Oeh1hXG2AN-pr6YhkkhndcS_vNr57insQ
         You have one cloud available: 'cloud-oleg-manzhay' (id = b1g3a3i0fgpc8rekglrh). It is going to be used by default.
         Please choose folder to use:
-        [1] default (id = b1gvkhufmti0jdoakccc)
+        [1] default (id = b1gvkhufmti0jdoakccc) 
         [2] dockerregistry (id = b1g21id6bcefmvt4ktbc)
         [3] registry (id = b1gmkg7r8tp34lc7rbhq)
         [4] Create a new folder
@@ -62,3 +62,40 @@
     - Запустите Docker-образ
         docker run cr.yandex/<идентификатор_реестра>/ubuntu:hello (id реестра: crpvstcq03e9l7aj0lfe)
 
+
+Инструкция по работе с terraform
+https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#cli_1
+Создание нового каталога в облаке через web-console
+    terraform b1g9nvupbq7mc7ucr9h4
+Переключение сервисного 
+    yc config set folder-id b1g9nvupbq7mc7ucr9h4
+Создание сервисного аккаунта 
+    yc iam service-account create --name sa-terraform
+Результат:
+    done (3s)
+    id: aje5ov2ku1tg2ht40v98
+    folder_id: b1g9nvupbq7mc7ucr9h4
+    created_at: "2026-01-16T06:53:31Z"
+    name: sa-terraform
+
+Назначение роли для ServiceAccoun
+    yc resource-manager folder add-access-binding b1g9nvupbq7mc7ucr9h4 \
+    --role admin \
+    --subject serviceAccount:aje5ov2ku1tg2ht40v98
+Результат:
+    done (2s)
+effective_deltas:
+  - action: ADD
+    access_binding:
+      role_id: admin
+      subject:
+        id: aje5ov2ku1tg2ht40v98
+        type: serviceAccount
+
+export YC_TOKEN=$(yc iam create-token --impersonate-service-account-id aje5ov2ku1tg2ht40v98)
+export YC_CLOUD_ID=$(yc config get cloud-id)
+export YC_FOLDER_ID=$(yc config get folder-id)
+
+echo $YC_TOKEN
+echo $YC_CLOUD_ID
+echo $YC_FOLDER_ID

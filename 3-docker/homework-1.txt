@@ -11,6 +11,7 @@
     Предоставьте ответ в виде ссылки на https://hub.docker.com/<username_repo>/custom-nginx/general .
 
 Выполнение:
+https://docs.docker.com/engine/install/ubuntu/ - можно по инструкции установить докер
 - sudo curl -L https://github.com/docker/compose/releases/download/v2.18.1/docker-compose-$(uname -s)-$(uname -m) -o /usr/bin/docker-compose - установка docker-compose
 - sudo chmod +x /usr/bin/docker-compose - выдача прав на файл
 
