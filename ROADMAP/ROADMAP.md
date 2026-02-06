@@ -125,6 +125,53 @@ Service
 
         _!!!ВАЖНО!!! - взаимодействие service и pod завязано на selector (selector service -> label pod (только тогда service увидит под))_
 ------------------------------------------------------------------------------------------------------------------------------------------------
+
+Deployment 
+        
+    livenessProbe - проверяет живет ли приложение, если нет, то перезапускает его
+```     
+  livenessProbe:
+      httpGet:
+        path: /actuator/health
+        port: 8080
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      
+  livenessProbe:
+      exec:
+        command:
+          - sh
+          - -c
+          - "test -f /tmp/ready"
+      initialDelaySeconds: 5
+      periodSeconds: 10
+```
+    readinessProbe - проверяет готово ли приложение, к получению трафика
+```        
+    readinessProbe
+      httpGet:
+        path: /actuator/health
+        port: 8080
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      
+    readinessProbe:
+      exec:
+        command:
+          - sh
+          - -c
+          - "test -f /tmp/ready"
+      initialDelaySeconds: 5
+      periodSeconds: 10
+```
+    startupProbe - временно приостанавливает выполнение Liveness‑ и Readiness‑проверок до тех пор, пока приложение не стабилизируется.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 RBAC
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
