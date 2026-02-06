@@ -193,6 +193,7 @@ https://habr.com/ru/companies/T1Holding/articles/781368/?ysclid=mjsdt85ddl491088
                         - name: hcms-admin
                           mountPath: /hcms-admin/language.yml
                           subPath: language.yml                - отдельно возьмет параметр из конфигмапы (при этом в конфигмапе есть другие ключи помимо language.yml) (если subpath не указан, то возьмет все что есть в конфигмапе)
+                          readOnly: true
 ------------------------------------------------------------------------------------------------------------------------------------------------  
     - Secrets
     - HPA
