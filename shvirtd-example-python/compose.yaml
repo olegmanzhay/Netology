@@ -15,24 +15,24 @@ services:
       - db
     restart: always
 
-  # Сервис MySQL
-  db:
-    image: mysql:8
-    networks:
-        backend:
-          ipv4_address: 172.20.0.10
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_HOST: "%"
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - type: bind
-        source: ./custom-mysql.cnf
-        target: /etc/mysql/conf.d/custom-mysql.cnf
-    restart: on-failure
-volumes:
-  mysql-data: {}
+#   # Сервис MySQL
+#   db:
+#     image: mysql:8
+#     networks:
+#         backend:
+#           ipv4_address: 172.20.0.10
+#     environment:
+#       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+#       MYSQL_DATABASE: ${DB_NAME}
+#       MYSQL_USER: ${DB_USER}
+#       MYSQL_PASSWORD: ${DB_PASSWORD}
+#       MYSQL_ROOT_HOST: "%"
+#     volumes:
+#       - mysql-data:/var/lib/mysql
+#       - type: bind
+#         source: ./custom-mysql.cnf
+#         target: /etc/mysql/conf.d/custom-mysql.cnf
+#     restart: on-failure
+# volumes:
+#   mysql-data: {}
 

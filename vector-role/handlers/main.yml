@@ -1,0 +1,10 @@
+---
+- name: restart vector
+  systemd:
+    name: vector
+    state: restarted
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+  when: ansible_service_mgr == 'systemd'

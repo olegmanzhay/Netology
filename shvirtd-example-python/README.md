@@ -105,3 +105,46 @@ tar -xf image.tar
 cd 7e2a9243ac37762b061fe61d62ebfc3d8905f41c158cc183fd9863645fb45824 
 tar -xf layer.tar
 cat ./app/requirements.txt
+
+
+
+
+
+
+docker run --rm \
+    --network shvirtd-example-python_backend \
+    -v ./backup:/backup \
+    mysql:latest \
+    bash -c 'exec mysqldump --opt -h shvirtd-example-python-db-1 -u root -p"YtReWq4321" example > /backup/$(date +"%Y%m%d_%H%M%S")-example.sql'
+
+    docker run  \
+    --network shvirtd-example-python_backend \
+    -v ./backup:/backup \
+    schnitzler/mysqldump:latest \
+    bash -c 'exec mysqldump --opt -h shvirtd-example-python-db-1 -u root -p"YtReWq4321" example > /backup/$(date +"%Y%m%d_%H%M%S")-example.sql'
+
+    docker run \
+    --rm --entrypoint "" \
+    --network shvirtd-example-python_backend \
+    -v ./backup:/backup \
+    schnitzler/mysqldump \
+    mysqldump --opt -h shvirtd-example-python-db-1  -u root -p"YtReWq4321" "--result-file=/backup/$(date +"%Y%m%d_%H%M%S")-example.sql" example
+
+SHOW PLUGINS LIKE 'mysql_native_password%';
+
+Создаем конфиг файл для mysql custom-mysql.cnf
+
+[mysqld]
+mysql_native_password=ON
+
+в compose.yaml добавляем кастомный конфиг для возможности включить плагин mysql_native_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - type: bind
+        source: ./custom-mysql.cnf
+        target: /etc/mysql/conf.d/custom-mysql.cnf
+
+// INSTALL PLUGIN mysql_native_password SONAME 'auth.so';
+
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'YtReWq4321';
+FLUSH PRIVILEGES;

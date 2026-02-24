@@ -1,0 +1,8 @@
+---
+vector_package_name: "vector"
+vector_config_path: "/etc/vector/vector.toml"
+vector_data_dir: "/var/lib/vector"
+vector_user: "vector"
+vector_group: "vector"
+vector_api_port: 8686
+vector_http_port: 8383

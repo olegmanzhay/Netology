@@ -1,0 +1,79 @@
+---
+- name: Add Vector repository GPG key
+  apt_key:
+    url: "https://packages.timber.io/gpg.asc"
+    state: present
+
+- name: Add Vector repository
+  apt_repository:
+    repo: "deb [trusted=yes] https://packages.timber.io/stable/apt/ any main"
+    state: present
+    filename: "vector"
+
+- name: Update apt cache after adding repository
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Create vector user and group
+  user:
+    name: "{{ vector_user }}"
+    group: "{{ vector_group }}"
+    system: yes
+    shell: /bin/false
+    create_home: no
+
+- name: Install Vector
+  apt:
+    name: "vector={{ vector_version }}-1"
+    state: present
+    force: yes
+
+- name: Ensure Vector data directory exists
+  file:
+    path: "{{ vector_data_dir }}"
+    state: directory
+    owner: "{{ vector_user }}"
+    group: "{{ vector_group }}"
+    mode: '0755'
+
+- name: Ensure Vector config directory exists
+  file:
+    path: "/etc/vector"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Deploy Vector configuration
+  template:
+    src: vector.toml.j2
+    dest: "{{ vector_config_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart vector
+
+- name: Enable and start Vector service
+  systemd:
+    name: vector
+    enabled: yes
+    state: started
+  register: vector_service_status
+
+- name: Wait for Vector HTTP port to be available
+  wait_for:
+    port: "{{ vector_http_port }}"
+    host: 127.0.0.1
+    timeout: 30
+  when: vector_service_status is changed
+
+- name: Verify Vector is running via API
+  uri:
+    url: "http://127.0.0.1:{{ vector_api_port }}/health"
+    status_code: 200
+    timeout: 10
+  retries: 5
+  delay: 2
+  register: api_check
+  until: api_check.status == 200
